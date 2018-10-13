@@ -2,7 +2,7 @@
 const express = require('express');
 const hotelCtrl = require('../controllers/hotel');
 const userCtrl= require('../controllers/user');
-//const reservCtrl= require('../controllers/reservation');
+const reservCtrl= require('../controllers/reservation');
 const auth = require('../middlewares/auth');
 const api= express.Router();
 
@@ -24,7 +24,7 @@ api.post('/user/signUp', userCtrl.signUp);
 api.put('/user/:id', userCtrl.UpdateUser);
 api.delete('/user/:id', userCtrl.DeleteUser);
 
-//api.post('/reservation/create', userCtrl.CreateReserv);
+api.post('/reservation/create', reservCtrl.CreateReservation);
 
 
 module.exports = api;

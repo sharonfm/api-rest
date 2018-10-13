@@ -6,8 +6,8 @@ function getHotels (req,res){
   const params = req.query //porque viene como parámetro en la url
 
   Hotel.find(params, (err, hotel) => {
-    if(err) return res.status(500).send({message: `Error al realizar la petición: ${err}` })
-    if(!hotel) return res.status(404).send({message: `El hotel no existe`})
+    if(err) return res.status(500).send({message: `Error making the request: ${err}` })
+    if(!hotel) return res.status(404).send({message: `The hotel does not exist`})
     //Si no ocurre nada de esto es pq si existe.
     res.status(200).send({ hotel })
   })
@@ -42,8 +42,8 @@ function getHotels (req,res){
 
 function getHotel (req, res){
   Hotel.find({},(err, hotels) => {//encuentre todos
-    if(err) return res.status(500).send({message: `Error al realizar la petición: ${err}` })
-    if (!hotels) return res.status(404).send({message: `No existen hoteles`})
+    if(err) return res.status(500).send({message: `Error making the request: ${err}` })
+    if (!hotels) return res.status(404).send({message: `There are no hotels`})
     //Si todo salió bien
     res.status(200).send({hotels});
   })
@@ -96,8 +96,8 @@ function getDistance(req, res){
     });
     res.json(A);
   }).catch(err => {
-    if(err) return res.status(500).send({message: `Error al realizar la petición: ${err}` });
-    if(!hotel) return res.status(404).send({message: `El hotel no existe`});
+    if(err) return res.status(500).send({message: `Error making the request: ${err}` });
+    if(!hotel) return res.status(404).send({message: `The hotel does not exist`});
   })
 }
 

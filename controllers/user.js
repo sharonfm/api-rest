@@ -66,14 +66,25 @@ function UpdateUser(req, res){
 
     doc.save()
     .then((updated) =>{
-      res.json({message: 'User Updated', updated});
+      res.json({
+        message: 'User Updated', updated,
+        State: 1
+      });
     })
     .catch((err) => {
-      res.json(err);
-    })
+        res.json({
+          message:'The user could not be Updated',
+          err,
+          State: 0
+        });
+    });
   })
   .catch((err) =>{
-    res.json(err);
+    res.json({
+      message:'The user could not be Updated',
+      err,
+      State: 0
+    });
   })
 }
 function DeleteUser(req, res){
