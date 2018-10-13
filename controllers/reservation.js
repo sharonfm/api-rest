@@ -1,16 +1,16 @@
 
 const mongoose = require('mongoose');
-const Reservation = require('../models/reservation')
-const Hotel= require('../models/hotel')
+const Reservation = require('../models/reservation');
+const Hotel= require('../models/hotel');
 
 function CreateReservation(req, res){
   const booking = req.body;
-  //  console.log(booking);
+    console.log(booking);
     Reservation.aggregate([
         {
         $match: {
             $and: [{
-                hotelID: booking.hotelID,
+                idHotel: booking.idHotel,
             },
                 {
                 startDate: {
@@ -31,18 +31,18 @@ function CreateReservation(req, res){
     }])
     .then(function(result) {
         const booked = result;
-        //console.log(booked);
+        console.log(booked);
         let availables;
-        Hotel.findById(booking.hotelID)
+        Hotel.findById(booking.idHotel)
             .then((hotel) => {
-                //console.log(hotel);
+                console.log(hotel);
                 if (booked.length !== 0) {
-                  //  console.log(booked[0]);
+                    console.log(booked[0]);
                     availables = hotel.Rooms - booked[0].total;
                 } else {
                     availables = hotel.Rooms;
                 }
-                //console.log(availables);
+                console.log(availables);
                 if(availables >= booking.RoomsReserved) {
                     const document = new Reservation(req.body);
                     document.save()
@@ -64,6 +64,6 @@ function CreateReservation(req, res){
                 }
             })
     })
-};
 
+};
 module.exports= {CreateReservation}
