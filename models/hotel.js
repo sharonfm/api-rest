@@ -30,10 +30,21 @@ const HotelSchema = Schema({
   },
   Rooms: {
       type: Number,
-      required: true
+      required: true,
+      min: 10
   },
   Size: String,
   Latitude: String,
   Longitude: String
+})
+HotelSchema.pre('save', function Save(next) {
+    if (this.Rooms >= 10 && this.Rooms <= 50) {
+        this.Size = 'Small';
+    } else if (this.Rooms >= 51 && this.Rooms < 100) {
+        this.Size = 'Medium';
+    } else if (this.Rooms >= 100) {
+        this.Size = 'Large';
+    }
+    next();
 })
 module.exports = mongoose.model('Hotel', HotelSchema, 'Hotel_Tourism')

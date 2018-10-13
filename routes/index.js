@@ -8,10 +8,10 @@ const api= express.Router();
 
 api.get('/hotel', hotelCtrl.getHotels);// Obtener la info de hotels
 api.get('/hotel/:params', hotelCtrl.getHotel); //Acceder a un único recurso (hotelID)
-api.get('/hotel/coordinates', hotelCtrl.getDistance);
+api.get('/hotel/coordinates/find', hotelCtrl.getDistance);
 api.post('/hotel', auth ,hotelCtrl.saveHotel); // Subir info
-api.put('/hotel/:hotelID', auth , hotelCtrl.updateHotel); // Actualizaciones
-api.delete('/hotel/:hotelID', auth , hotelCtrl.deleteHotel); // Eliminar
+api.put('/hotel/:id', auth , hotelCtrl.updateHotel); // Actualizaciones
+api.delete('/hotel/:id', auth , hotelCtrl.deleteHotel); // Eliminar
 
 api.post('/hotel/generateToken', userCtrl.generateToken);
 

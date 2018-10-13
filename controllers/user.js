@@ -77,7 +77,6 @@ function UpdateUser(req, res){
   })
 }
 function DeleteUser(req, res){
-
   const id= req.params.id;
   User.findById(id)
   .then((user) =>{

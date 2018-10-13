@@ -52,6 +52,7 @@ function getHotel (req, res){
 function getDistance(req, res){
   const params= req.query;
   function haversineDistance(par) {
+    console.log(par);
          function toRad(x) {
              return x * Math.PI / 180;
          }
@@ -81,55 +82,83 @@ function getDistance(req, res){
   Hotel.find({})
   .then((docs) => {
     docs.forEach(function(hotel, index) {
-      console.log("Hola");
       const coordinates = {
         'lat1': params.Latitude,
         'long1': params.Longitude,
         'lat2': hotel.Latitude,
         'long2': hotel.Longitude
       };
-                    const d = haversineDistance(coordinates);
-                    console.log(d);
-                    if (d <= params.Range) {
-                        A.push(hotel);
-                    }
-                });
-                res.json(A);
-            }).catch(err => {
-       if(err) return res.status(500).send({message: `Error al realizar la petición: ${err}` });
-        if(!hotel) return res.status(404).send({message: `El hotel no existe`});
-     })
-}
-
-function saveHotel (req,res) {
-  console.log('POST/api/hotel')
-  console.log(req.body) //con esto tenemos todo el modelo
-  let hotel = new Hotel()
-
-  hotel.save((err, hotelStored) => {
-    if(err) res.status(500).send({message: `Error al guardar en la base de datos ${err} `})
-    res.status(200).send({hotel: hotelStored})
+      const d = haversineDistance(coordinates);
+      //console.log(d);
+      if (d <= params.Range) {
+        A.push(hotel);
+      }
+    });
+    res.json(A);
+  }).catch(err => {
+    if(err) return res.status(500).send({message: `Error al realizar la petición: ${err}` });
+    if(!hotel) return res.status(404).send({message: `El hotel no existe`});
   })
 }
 
+function saveHotel (req,res) {
+  //console.log('POST/api/hotel')
+  //console.log(req.body) //con esto tenemos todo el modelo
+  const body= req.body;
+  const hotel= new Hotel(body);
+  hotel.save()
+       .then((created) => {
+           res.json({
+               created
+           });
+       })
+       .catch((err) => {
+           res.json({
+             err
+           });
+       });
+}
+
 function updateHotel (req, res){
-  let hotelID = req.params.hotelID
-  let update = req.body
-  Hotel.findByIdAndUpdate(hotelID, update, (err, hotelUpdated) => {
-    if(err) res.status(500).send({message: `Error al actualizar el hotel ${err}`})
-     res.status(200).send({hotel: hotelUpdated })
+  const body= req.body;
+  const id= req.params.id;
+  Hotel.findById(id)
+  .then((hotel) =>{
+    const doc2= hotel;
+    Object.assign(doc2, body);
+    const doc= new Hotel(doc2);
+
+    doc.save()
+    .then((updated) =>{
+      res.json({message: 'Hotel Updated', updated, state: 1});
+    })
+    .catch((err) => {
+      res.json(err);
+    })
+  })
+  .catch((err) =>{
+    res.json(err);
   })
 }
 
 function deleteHotel (req, res){
-  let hotelID = req.params.hotelID
-    Hotel.findById(hotelID, (err, hotel) => {
-      if (err) res.status(500).send({message: `Error al borrar el hotel: ${err}`})
-      hotel.remove(err => {
-        if (err) res.status(500).send({message: `Error al borrar el hotel: ${err}`})
-        res.status(200).send({message:'El hotel ha sido elminado '})
-      })
+  const id= req.params.id;
+  Hotel.findById(id)
+  .then((hotel) =>{
+    const doc2= hotel;
+    const doc= new Hotel(doc2);
+
+    doc.remove()
+    .then((removed) =>{
+      res.json({message: 'Hotel Deleted', removed});
     })
+    .catch((err) => {
+      res.json(err);
+    })
+  })
+  .catch((err) =>{
+    res.json(err);
+  })
 }
 
 module.exports= {
