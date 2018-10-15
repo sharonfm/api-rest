@@ -1,5 +1,7 @@
 'use strict'
 const Hotel= require('../models/hotel')//esquema de hotel
+const Reservation = require('../models/reservation')
+const mongoose = require ('mongoose')
 //const https = require('https')
 
 function getHotels (req,res){
@@ -15,7 +17,6 @@ function getHotels (req,res){
   Hotel.find({}).exec().then((docs) => {
          docs.forEach(function(hotel, index) {
              const address = hotel.ADDRESS.replace(/["]+/g, '');
-
              if(hotel.Latitude ===  undefined ){
                console.log(hotel.Latitude ===  undefined)
              https.get("https://geocoder.api.here.com/6.2/geocode.json?app_id=sNvkDXsVsZ5XFarQRCeF&app_code=T30x8qywRMP_zpZVcjRN8A&searchtext=" + address, (resp) => {
@@ -34,12 +35,10 @@ function getHotels (req,res){
                  })
              })
            }
-
          });
      })*/
      //res.json({});
 }
-
 function getHotel (req, res){
   Hotel.find({},(err, hotels) => {//encuentre todos
     if(err) return res.status(500).send({message: `Error making the request: ${err}` })
@@ -48,7 +47,6 @@ function getHotel (req, res){
     res.status(200).send({hotels});
   })
 }
-
 function getDistance(req, res){
   const params= req.query;
   function haversineDistance(par) {
@@ -100,7 +98,6 @@ function getDistance(req, res){
     if(!hotel) return res.status(404).send({message: `The hotel does not exist`});
   })
 }
-
 function saveHotel (req,res) {
   //console.log('POST/api/hotel')
   //console.log(req.body) //con esto tenemos todo el modelo
@@ -118,7 +115,6 @@ function saveHotel (req,res) {
            });
        });
 }
-
 function updateHotel (req, res){
   const body= req.body;
   const id= req.params.id;
@@ -140,7 +136,6 @@ function updateHotel (req, res){
     res.json(err);
   })
 }
-
 function deleteHotel (req, res){
   const id= req.params.id;
   Hotel.findById(id)
@@ -161,11 +156,65 @@ function deleteHotel (req, res){
   })
 }
 
+
+function Availability(req, res){
+  const params = req.query;
+  var dif;
+  var c=0;
+  Reservation.find({})
+  .then((reservation) => {
+    reservation.forEach(function(reservation, index) {
+    var reserved= reservation.RoomsReserved;
+    var idH= reservation.idHotel;
+    var start= reservation.startDate;
+    var end= reservation.endDate;
+    var state= reservation.state;
+    //var monmgoObjectId = mongoose.Types.ObjectId(idH);
+    //console.log(idH);
+    confirm(reserved, idH, start, end, state);
+  })
+  })
+
+  function confirm (reserved, idH, start, end, state){
+    const availableHotels = [];
+    Hotel.find( {} )
+    .then((hotel) => {
+    hotel.forEach(function(hotel, index) {
+           if (hotel._id == idH) {
+             dif= hotel.Rooms - reserved
+             if(end <= params.startDate){
+               if(start >= params.endDate){
+                 if(dif != 0 ){
+                   if(params.state== hotel.STATE){
+                     const objHotel = hotel.toObject();
+                     availableHotels.push(objHotel);
+                     c= c+1;
+                 }
+                 }
+               }
+             }
+           }else{
+             if(params.state == hotel.STATE){
+               const objHotel = hotel.toObject();
+               availableHotels.push(objHotel);
+               c= c+1;
+             }
+
+           }
+   })
+   res.json(availableHotels);
+   //console.log(availableHotels);
+ })
+
+}
+};
+
 module.exports= {
   getHotel,
   getHotels,
   getDistance,
   saveHotel,
   updateHotel,
-  deleteHotel
+  deleteHotel,
+  Availability
 }

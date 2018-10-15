@@ -7,7 +7,7 @@ const auth = require('../middlewares/auth');
 const api= express.Router();
 
 api.get('/hotel', hotelCtrl.getHotels);// Obtener la info de hotels
-api.get('/hotel/:params', hotelCtrl.getHotel); //Acceder a un único recurso (hotelID)
+api.get('/hotel/:params', hotelCtrl.getHotel) //Acceder a un único recurso (hotelID)
 api.get('/hotel/coordinates/find', hotelCtrl.getDistance);
 api.post('/hotel', auth ,hotelCtrl.saveHotel); // Subir info
 api.put('/hotel/:id', auth , hotelCtrl.updateHotel); // Actualizaciones
@@ -25,6 +25,7 @@ api.put('/user/:id', userCtrl.UpdateUser);
 api.delete('/user/:id', userCtrl.DeleteUser);
 
 api.post('/reservation/create', reservCtrl.CreateReservation);
+api.get('/hotel/availability/find/all', hotelCtrl.Availability);
 
 
 module.exports = api;

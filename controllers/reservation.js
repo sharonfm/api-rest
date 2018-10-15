@@ -66,4 +66,9 @@ function CreateReservation(req, res){
     })
 
 };
-module.exports= {CreateReservation}
+
+
+
+module.exports= {
+  CreateReservation
+}

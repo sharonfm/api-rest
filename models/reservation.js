@@ -19,7 +19,7 @@ const ReservationSchema = new Schema({
    type: String,
    required: true
  },
- State: {
+ state: {
    type: String,
    required: true
  },
